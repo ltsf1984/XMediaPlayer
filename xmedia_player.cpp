@@ -14,6 +14,36 @@ XMediaPlayer::~XMediaPlayer()
     player_engine_.Close();
 }
 
+void XMediaPlayer::tbPlayPause()
+{
+    std::cout << "tbPlayPause" << std::endl;
+    if (!playing_)
+    {
+        Play();
+    }
+    else
+    {
+        Pause();
+    }
+}
+
+void XMediaPlayer::tbStop()
+{
+    std::cout << "tbStop" << std::endl;
+    player_engine_.Close();
+}
+
+void XMediaPlayer::tbSeekForward()
+{
+    std::cout << "tbSeekForward" << std::endl;
+}
+
+void XMediaPlayer::tbSeekBackward()
+{
+    std::cout << "tbSeekBackward" << std::endl;
+}
+
+
 void XMediaPlayer::Play()
 {
     std::cout << "Start Play!" << std::endl;
@@ -24,12 +54,18 @@ void XMediaPlayer::Play()
     PixelFormat pix_fmt = PixelFormat::YUV420P;
     player_engine_.Play(input_filename, width, height, pix_fmt, win_id);
 
+    playing_ = true;
+}
 
+void XMediaPlayer::Pause()
+{
+
+    playing_ = false;
 }
 
 void XMediaPlayer::Stop()
 {
-    std::cout << "Stop" << std::endl;
-    player_engine_.Close();
 }
+
+
 

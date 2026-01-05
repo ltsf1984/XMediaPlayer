@@ -13,10 +13,18 @@ public:
     ~XMediaPlayer();
 
 public slots:
+    void tbPlayPause();
+    void tbStop();
+    void tbSeekForward();
+    void tbSeekBackward();
+
+public:
     void Play();
+    void Pause();
     void Stop();
 
 private:
+    bool playing_{ false };
     XMediaPlayerEngine player_engine_;    
 
 private:

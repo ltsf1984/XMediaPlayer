@@ -13,32 +13,6 @@
   <property name="windowTitle">
    <string>XMediaPlayer</string>
   </property>
-  <widget class="QPushButton" name="pb_start">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>310</y>
-     <width>79</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>start</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pb_stop">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>310</y>
-     <width>79</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>stop</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_video">
    <property name="geometry">
     <rect>
@@ -55,6 +29,86 @@
     <string>TextLabel</string>
    </property>
   </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>300</y>
+     <width>194</width>
+     <height>58</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QToolButton" name="tb_seek_backward">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset theme="QIcon::ThemeIcon::MediaSeekBackward"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tb_play_pause">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset theme="QIcon::ThemeIcon::MediaPlaybackStart"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="tb_seekforward">
+        <property name="text">
+         <string>...</string>
+        </property>
+        <property name="icon">
+         <iconset theme="QIcon::ThemeIcon::MediaSeekForward"/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>32</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QToolButton" name="tb_stop">
+      <property name="text">
+       <string>...</string>
+      </property>
+      <property name="icon">
+       <iconset theme="QIcon::ThemeIcon::MediaPlaybackStop"/>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
@@ -62,40 +116,74 @@
  </resources>
  <connections>
   <connection>
-   <sender>pb_start</sender>
+   <sender>tb_play_pause</sender>
    <signal>clicked()</signal>
    <receiver>XMediaPlayerClass</receiver>
-   <slot>Play()</slot>
+   <slot>tbPlayPause()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>214</x>
-     <y>192</y>
+     <x>260</x>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
-     <x>210</x>
-     <y>495</y>
+     <x>264</x>
+     <y>541</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>pb_stop</sender>
+   <sender>tb_stop</sender>
    <signal>clicked()</signal>
    <receiver>XMediaPlayerClass</receiver>
-   <slot>Stop()</slot>
+   <slot>tbStop()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>296</x>
-     <y>193</y>
+     <x>348</x>
+     <y>332</y>
     </hint>
     <hint type="destinationlabel">
-     <x>295</x>
-     <y>551</y>
+     <x>351</x>
+     <y>481</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tb_seekforward</sender>
+   <signal>clicked()</signal>
+   <receiver>XMediaPlayerClass</receiver>
+   <slot>tbSeekForward()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>301</x>
+     <y>335</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>311</x>
+     <y>513</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tb_seek_backward</sender>
+   <signal>clicked()</signal>
+   <receiver>XMediaPlayerClass</receiver>
+   <slot>tbSeekBackward()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>329</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>482</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>Play()</slot>
-  <slot>Stop()</slot>
+  <slot>tbPlayPause()</slot>
+  <slot>tbStop()</slot>
+  <slot>tbSeekForward()</slot>
+  <slot>tbSeekBackward()</slot>
  </slots>
 </ui>

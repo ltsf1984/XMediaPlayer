@@ -20,6 +20,8 @@ public:
 		PixelFormat pix_fmt,
 		void* win_id
 	);
+	bool Pause();
+	bool Stop();
 	void Close();
 
 private:

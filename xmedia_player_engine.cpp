@@ -52,8 +52,16 @@ bool XMediaPlayerEngine::Play(
 	render_th_.Start();
 	audio_output_th_.Start();
 	
+	return false;
+}
 
+bool XMediaPlayerEngine::Pause()
+{
+	return false;
+}
 
+bool XMediaPlayerEngine::Stop()
+{
 	return false;
 }
 
