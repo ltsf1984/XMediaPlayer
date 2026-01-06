@@ -42,6 +42,17 @@ void XDemuxThread::Stop()
 	}
 }
 
+void XDemuxThread::Pause()
+{
+	paused.store(true);
+}
+
+void XDemuxThread::Resume()
+{
+	paused.store(false);
+	pause_cv_.notify_one();
+}
+
 bool XDemuxThread::IsRunning()
 {
 	return running_;
@@ -60,6 +71,12 @@ void XDemuxThread::Run()
 {
 	while (!should_exit_)
 	{
+		// ÔÝÍ£ÅÐ¶Ï
+		std::unique_lock<std::mutex> lock(mtx_);
+		pause_cv_.wait(lock, [this]() {
+			return !paused;
+			});
+
 		std::shared_ptr<AVPacket> pkt = make_packet();
 		demuxer_.Read(pkt.get());
 		if (!pkt->buf)

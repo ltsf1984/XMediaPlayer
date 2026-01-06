@@ -13,8 +13,12 @@ public:
 	XDemuxThread();
 	~XDemuxThread() = default;
 
+	// 线程开始和停止
 	bool Start(const std::string& filename);
 	void Stop();
+	// 线程暂停和恢复（继续运行）
+	void Pause();
+	void Resume();
 	bool IsRunning();
 
 	// 获取解封装的数据包（解码线程调用）
@@ -30,5 +34,8 @@ private:
     std::unique_ptr<std::thread> thread_;
     std::atomic<bool> running_{ false };
     std::atomic<bool> should_exit_{ false };
+	std::atomic<bool> paused{ false };	// 线程是否暂停
+	std::condition_variable pause_cv_;
+	std::mutex mtx_;
 };
 

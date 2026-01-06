@@ -52,18 +52,49 @@ bool XMediaPlayerEngine::Play(
 	render_th_.Start();
 	audio_output_th_.Start();
 	
-	return false;
+	return true;
 }
 
-bool XMediaPlayerEngine::Pause()
+void XMediaPlayerEngine::Stop()
 {
-	return false;
+	// 1. 先停止生产者（解封装）
+	demux_th_.Stop(); // 它会自然结束（EOF）
+
+	// 2. 再向解码队列注入毒药，让解码线程退出
+	decode_video_th_.Stop(); // Push(nullptr) to VideoPacketQueue
+	decode_audio_th_.Stop(); // Push(nullptr) to AudioPacketQueue
+
+	// 3. 解码线程退出后，帧队列不再有新数据
+	//    向渲染/音频输出注入毒药
+	render_th_.Stop();       // Push(nullptr) to VideoFrameQueue
+	audio_output_th_.Stop(); // Push(nullptr) to AudioFrameQueue
 }
 
-bool XMediaPlayerEngine::Stop()
+void XMediaPlayerEngine::Pause()
 {
-	return false;
+	// 暂停解封装线程
+	demux_th_.Pause();
+	// 暂停音视频解码线程
+	decode_video_th_.Pause();
+	decode_audio_th_.Pause();
+	// 暂停渲染线程
+	render_th_.Pause();
+	audio_output_th_.Pause();
 }
+
+void XMediaPlayerEngine::Resume()
+{
+	// 恢复（继续）解封装线程
+	demux_th_.Resume();
+	// 恢复（继续）音视频解码线程
+	decode_video_th_.Resume();
+	decode_audio_th_.Resume();
+	// 恢复（继续）渲染线程
+	render_th_.Resume();
+	audio_output_th_.Resume();
+}
+
+
 
 void XMediaPlayerEngine::Close()
 {

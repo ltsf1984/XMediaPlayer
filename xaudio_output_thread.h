@@ -13,9 +13,13 @@ public:
 		AVRational audio_time_base,
 		SwrParam& input,
 		SwrParam& output);
+
+	// 线程开始和停止
 	bool Start();
-	bool Pause();
-	bool Stop();
+	void Stop();
+	// 线程暂停和恢复（继续运行）
+	void Pause();
+	void Resume();
 	
 public:
 	int64_t GetMasterClock() const {
@@ -31,5 +35,8 @@ private:
 	std::unique_ptr<std::thread> thread_;
 	std::atomic<bool> running_{ false };
 	std::atomic<bool> should_exit_{ false };
+	std::atomic<bool> paused{ false };	// 线程是否暂停
+	std::condition_variable pause_cv_;
+	std::mutex mtx_;
 };
 

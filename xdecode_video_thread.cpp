@@ -31,6 +31,7 @@ bool XDecodeVideoThread::Start()
 {
     if (running_)
     {
+        std::cout << "decode video thread is already running!" << std::endl;
         return true;
     }
 
@@ -55,6 +56,18 @@ void XDecodeVideoThread::Stop()
     }
 }
 
+void XDecodeVideoThread::Pause()
+{
+    paused.store(true);
+}
+
+void XDecodeVideoThread::Resume()
+{
+    paused.store(false);
+    pause_cv_.notify_one();
+}
+
+
 bool XDecodeVideoThread::IsRunning()
 {
     return running_;
@@ -73,6 +86,12 @@ void XDecodeVideoThread::Run()
 {
     while (!should_exit_)
     {
+        // ÔÝÍ£ÅÐ¶Ï
+        std::unique_lock<std::mutex> lock(mtx_);
+        pause_cv_.wait(lock, [this]() {
+            return !paused;
+            });
+
         AVPacketPtr pkt = make_packet();
         MediaQueues::Instance().VideoPacketQueue().Pop(pkt);
         if (!pkt) {

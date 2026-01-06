@@ -36,11 +36,6 @@ bool XRenderThread::Start()
 	return true;
 }
 
-bool XRenderThread::Pause()
-{
-	return true;
-}
-
 bool XRenderThread::Stop()
 {
 	if (thread_ && thread_->joinable())
@@ -55,6 +50,18 @@ bool XRenderThread::Stop()
 	return false;
 }
 
+void XRenderThread::Pause()
+{
+	paused.store(true);
+}
+
+void XRenderThread::Resume()
+{
+	paused.store(false);
+	pause_cv_.notify_one();
+}
+
+
 void XRenderThread::Run()
 {
 	const int64_t MAX_DELAY_US = 100 * 1000; // 100ms£¬×î´óµÈ´ý
@@ -62,6 +69,12 @@ void XRenderThread::Run()
 
 	while (!should_exit_)
 	{
+		// ÔÝÍ£ÅÐ¶Ï
+		std::unique_lock<std::mutex> lock(mtx_);
+		pause_cv_.wait(lock, [this]() {
+			return !paused;
+			});
+
 		AVFramePtr frame = make_frame();
 		MediaQueues::Instance().VideoFrameQueue().Pop(frame);
 		if (!frame) {

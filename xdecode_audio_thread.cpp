@@ -36,6 +36,7 @@ bool XDecodeAudioThread::Start()
 {
     if (running_)
     {
+        std::cout << "decode audio thread is already running!" << std::endl;
         return true;
     }
 
@@ -59,6 +60,17 @@ void XDecodeAudioThread::Stop()
     }
 }
 
+void XDecodeAudioThread::Pause()
+{
+    paused.store(false);
+}
+
+void XDecodeAudioThread::Resume()
+{
+    paused.store(false);
+    pause_cv_.notify_one();
+}
+
 bool XDecodeAudioThread::IsRunning()
 {
     return running_;
@@ -77,6 +89,12 @@ void XDecodeAudioThread::Run()
 {
     while (!should_exit_)
     {
+        // ÔÝÍ£ÅÐ¶Ï
+        std::unique_lock<std::mutex> lock(mtx_);
+        pause_cv_.wait(lock, [this]() {
+            return !paused;
+            });
+
         AVPacketPtr pkt = make_packet();
         MediaQueues::Instance().AudioPacketQueue().Pop(pkt);
         if (!pkt) {

@@ -35,13 +35,7 @@ bool XAudioOutputThread::Start()
 	return true;
 }
 
-bool XAudioOutputThread::Pause()
-{
-	audio_outputer_.Pause();
-	return true;
-}
-
-bool XAudioOutputThread::Stop()
+void XAudioOutputThread::Stop()
 {
 	if (running_ && thread_->joinable())
 	{
@@ -53,14 +47,33 @@ bool XAudioOutputThread::Stop()
 		MediaQueues::Instance().AudioFrameQueue().Push(nullptr);
 		thread_->join();
 	}
-    return false;
 }
+
+void XAudioOutputThread::Pause()
+{
+	audio_outputer_.Pause();
+	paused.store(true);
+}
+
+void XAudioOutputThread::Resume()
+{
+	audio_outputer_.Play();
+	paused.store(false);
+	pause_cv_.notify_one();
+}
+
 
 void XAudioOutputThread::Run()
 {
 	static int write_count = 0;
 	while (!should_exit_)
 	{
+		// ÔÝÍ£ÅÐ¶Ï
+		std::unique_lock<std::mutex> lock(mtx_);
+		pause_cv_.wait(lock, [this]() {
+			return !paused;
+			});
+
 		AVFramePtr frame = make_frame();
 		std::cout << "XAudioOutputThread write count" << write_count++<<std::endl;
 		MediaQueues::Instance().AudioFrameQueue().Pop(frame);
